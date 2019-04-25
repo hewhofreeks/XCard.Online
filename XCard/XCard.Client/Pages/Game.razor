@@ -1,0 +1,20 @@
+﻿@page "/game"
+@page "/game/{GameID}"
+@inject HttpClient Http
+
+<h1>Game</h1>
+
+<p>gameID : @GameID</p>
+
+
+@functions {
+
+    [Parameter]
+    string GameID { get; set; }
+
+    protected async override Task OnInitAsync()
+    {
+        await Http.GetJsonAsync<WeatherForecast[]>("api/SampleData/WeatherForecasts");
+
+    }
+}

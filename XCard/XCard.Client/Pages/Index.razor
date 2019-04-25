@@ -1,0 +1,19 @@
+﻿@page "/"
+@inject HttpClient Http
+@using XCard.Shared
+
+<h1>Hello!</h1>
+
+Please input your name:
+<input type="text" bind="@UserName" />
+<button onclick="@StartSession()">Create Game Session</button>
+
+@functions {
+    string UserName { get; set; }
+
+    async Task StartSession()
+    {
+        await Http.PostJsonAsync<GameSession>("api/Game/BeginGame", UserName);
+
+    }
+}
