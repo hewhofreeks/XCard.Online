@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Serialization;
 using System.Linq;
+using XCard.Server.Hubs;
 using XCard.Server.Stores;
 
 namespace XCard.Server
@@ -23,6 +24,8 @@ namespace XCard.Server
             });
 
             services.AddSingleton<IGameSessionStore, GameSessionStore>();
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,7 +46,13 @@ namespace XCard.Server
                 endpoints.MapDefaultControllerRoute();
             });
 
+            app.UseSignalR(route =>
+            {
+                route.MapHub<GameHub>("/gameHub");
+            });
+
             app.UseBlazor<Client.Startup>();
+
         }
     }
 }

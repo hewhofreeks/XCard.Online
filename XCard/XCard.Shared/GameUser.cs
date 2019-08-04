@@ -7,5 +7,7 @@ namespace XCard.Shared
     public class GameUser
     {
         public string Username { get; set; }
+
+        public string ConnectionId { get; set; }
     }
 }

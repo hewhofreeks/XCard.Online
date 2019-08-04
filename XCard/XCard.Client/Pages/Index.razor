@@ -1,19 +1,33 @@
 ﻿@page "/"
-@inject HttpClient Http
+
+@inject IUriHelper UriHelper
+@inject IGameHubClient GameHubClient
+
 @using XCard.Shared
 
 <h1>Hello!</h1>
 
-Please input your name:
+<label>Please input your name:</label>
 <input type="text" bind="@UserName" />
-<button onclick="@StartSession()">Create Game Session</button>
+
+<label>Please give your session a name:</label>
+<input type="text" bind="@SessionName" />
+
+<button onclick="@StartSession">Create Game Session</button>
 
 @functions {
     string UserName { get; set; }
+    string SessionName { get; set; }
 
     async Task StartSession()
     {
-        await Http.PostJsonAsync<GameSession>("api/Game/BeginGame", UserName);
+        var connection = await GameHubClient.GetHubConnection();
+        var session = await connection.InvokeAsync<GameSession>("StartGame", UserName, SessionName);
 
-    } 
+        if (session.SessionID != Guid.Empty)
+        {
+            UriHelper.NavigateTo($"game/{session.SessionID}");
+        }
+    }
+
 }

@@ -8,9 +8,15 @@ namespace XCard.Server.Stores
 {
     public interface IGameSessionStore
     {
+        GameSession FindSession(Guid id);
+
+        GameSession FindSession(string connectionID);
+
         GameSession JoinSession(Guid id, GameUser user);
 
-        GameSession StartSession(GameUser host);
+        GameSession StartSession(GameUser host, string sessionName);
+
+        IEnumerable<GameSession> QuitSessions(string connectionID);
 
         void EndSession(Guid id);
     }
@@ -27,6 +33,24 @@ namespace XCard.Server.Stores
             _gameSessionStore.Remove(id);
         }
 
+        public GameSession FindSession(Guid id)
+        {
+            if (!_gameSessionStore.ContainsKey(id))
+                throw new KeyNotFoundException();
+
+            return _gameSessionStore[id];
+        }
+
+        public GameSession FindSession(string connectionID)
+        {
+            var sessions = _gameSessionStore.Where(s => s.Value.CurrentUsers.Any(c => c.ConnectionId == connectionID));
+
+            if (sessions.Any())
+                return sessions.FirstOrDefault().Value;
+
+            return null;
+        }
+
         public GameSession JoinSession(Guid id, GameUser user)
         {
             if (!_gameSessionStore.ContainsKey(id))
@@ -39,11 +63,26 @@ namespace XCard.Server.Stores
             return session;
         }
 
-        public GameSession StartSession(GameUser host)
+        public IEnumerable<GameSession> QuitSessions(string connectionID)
+        {
+            var sessions = _gameSessionStore.Where(s => s.Value.CurrentUsers.Any(c => c.ConnectionId == connectionID));
+
+            foreach(var session in sessions)
+            {
+                var user = session.Value.CurrentUsers.FirstOrDefault(s => s.ConnectionId == connectionID);
+
+                if (user != null)
+                    session.Value.CurrentUsers.Remove(user);
+            }
+
+            return sessions.Select(s => s.Value);
+        }
+
+        public GameSession StartSession(GameUser host, string sessionName)
         {
             Guid id = Guid.NewGuid();
 
-            var session = new GameSession { SessionID = id, CurrentUsers = new List<GameUser>(), Host = host };
+            var session = new GameSession { SessionID = id, CurrentUsers = new List<GameUser>(), Host = host, SessionName = sessionName };
             _gameSessionStore.Add(id, session);
 
             return session;
