@@ -7,11 +7,8 @@ namespace XCard.Shared
     public class GameSession
     {
         public Guid SessionID { get; set; }
-
         public GameUser Host { get; set; }
-
         public string SessionName { get; set; }
-
         public List<GameUser> CurrentUsers { get; set; }
     }
 }

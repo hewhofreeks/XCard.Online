@@ -38,6 +38,8 @@ namespace XCard.Server.Hubs
                 sessionForUser = _gameSessionStore.JoinSession(Guid.Parse(sessionId), user);
 
                 await this.Groups.AddToGroupAsync(this.Context.ConnectionId, sessionForUser.SessionID.ToString());
+
+                await this.Clients.Group(sessionId).SendAsync("GameSessionUpdated", sessionForUser.CurrentUsers.Select(s => s.Username).ToList());
             }
 
             return sessionForUser;
@@ -52,6 +54,13 @@ namespace XCard.Server.Hubs
             await this.Groups.AddToGroupAsync(this.Context.ConnectionId, session.SessionID.ToString());
 
             return session;
+        }
+
+        public async Task<bool> IsGameConnectionActive(string sessionId)
+        {
+            var game = _gameSessionStore.FindSession(Guid.Parse(sessionId));
+
+            return game != null;
         }
 
         public async Task EndSession(string sessionID)

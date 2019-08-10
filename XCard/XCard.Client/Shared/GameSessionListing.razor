@@ -1,0 +1,30 @@
+﻿@inject IGameHubClient GameHubClient
+@inject IUriHelper UriHelper
+
+<tr @onclick="TryJoin" class="@ActiveClass">
+    <td>@GameData.Name</td>
+    <td>@IsGameActive</td>
+</tr>
+
+@code {
+    [Parameter]
+    public Models.LocalGameData GameData { get; set; }
+
+    string ActiveClass => IsGameActive ? "active" : "inactive";
+
+    bool IsGameActive { get; set; }
+
+    protected override async Task OnInitAsync()
+    {
+        var connection = await GameHubClient.GetHubConnection();
+
+        IsGameActive = await connection.InvokeAsync<bool>("IsGameConnectionActive", GameData.SessionID);
+
+        await base.OnInitAsync();
+    }
+
+    async Task TryJoin()
+    {
+        UriHelper.NavigateTo($"/game/{GameData.SessionID}");
+    }
+}

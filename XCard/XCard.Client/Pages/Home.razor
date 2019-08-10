@@ -1,0 +1,54 @@
+﻿@page "/home"
+@inject HttpClient Http
+@inject IGameHubClient GameHubClient
+@inject IUriHelper UriHelper
+@inherits Components.Home
+@using XCard.Shared
+
+@if (CurrentUser != null)
+{
+    <div>
+        <p>Welcome @CurrentUser.Username</p>
+    </div>
+    <div>
+        <div>
+            Start a game:
+            <input type="text" @bind="NewGameName" />
+            <button @onclick="CreateGameSession">Start Game Session</button>
+        </div>
+        <div>
+            @if (Games != null && Games.Any())
+            {
+                <div>
+                    <table>
+                        <tr>
+                            <th>Session Name</th>
+                            <th>Currently Online?</th>
+                        </tr>
+                        @foreach (var game in Games.OrderByDescending(g => g.AddedOn))
+                        {
+                            <GameSessionListing GameData="game" />
+                        }
+                    </table>
+
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+
+    string NewGameName { get; set; }
+
+    async Task CreateGameSession()
+    {
+        var connection = await GameHubClient.GetHubConnection();
+
+        var session = await connection.InvokeAsync<GameSession>("StartGame", CurrentUser.Username, NewGameName);
+
+        await _LocalGameStorage.AddGameConnection(session.SessionName, session.SessionID);
+
+        UriHelper.NavigateTo($"/game/{session.SessionID}");
+    }
+}

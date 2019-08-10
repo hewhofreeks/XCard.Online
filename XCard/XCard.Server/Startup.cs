@@ -38,21 +38,17 @@ namespace XCard.Server
                 app.UseDeveloperExceptionPage();
                 app.UseBlazorDebugging();
             }
+            app.UseClientSideBlazorFiles<Client.Startup>();
 
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
+                endpoints.MapFallbackToClientSideBlazor<Client.Startup>("index.html");
+                endpoints.MapHub<GameHub>("/gameHub");
             });
-
-            app.UseSignalR(route =>
-            {
-                route.MapHub<GameHub>("/gameHub");
-            });
-
-            app.UseBlazor<Client.Startup>();
-
+            
         }
     }
 }

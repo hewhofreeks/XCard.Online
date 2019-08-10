@@ -36,7 +36,7 @@ namespace XCard.Server.Stores
         public GameSession FindSession(Guid id)
         {
             if (!_gameSessionStore.ContainsKey(id))
-                throw new KeyNotFoundException();
+                return null; 
 
             return _gameSessionStore[id];
         }

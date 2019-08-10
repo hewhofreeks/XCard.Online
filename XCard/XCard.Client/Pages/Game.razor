@@ -1,28 +1,28 @@
-﻿@page "/game"
-@page "/game/{GameID}"
-@inject HttpClient Http
+﻿@page "/game/{GameID}"
+@using XCard.Shared
+@using Newtonsoft.Json
+@inherits Components.BaseAuthComponent
 @inject IGameHubClient GameHubClient
 @inject IUriHelper UriHelper
-@using XCard.Shared
-
 
 @if (Session != null)
 {
     <h1>Game</h1>
     <p>@Session.SessionName</p>
 
-    @if (User == null)
-    {
-        <label>Please provide a name:</label>
-        <input type="text" bind="@Username" />
-        <button onclick="@JoinGame">Join Game</button>
+    <p>Welcome @CurrentUser.Username</p>
+    <button onclick="">PUSH ME(Does nothing right now)</button>
+    <p>Open link in new window to demonstrate how another person can join: @UriHelper.GetAbsoluteUri()</p> 
 
-    }
-    else
-    {
-        <p>Welcome @User.Username</p>
-        <button onclick="">PUSH ME</button>
-    }
+    <p>Current People In Game</p>
+    <div>
+        @foreach (var user in Users)
+        {
+            <div>
+                @user
+            </div>
+        }
+    </div>
 }
 else
 {
@@ -35,30 +35,36 @@ else
     string GameID { get; set; }
 
     GameSession Session { get; set; }
-    GameUser User { get; set; }
-    bool IsAdmin { get; set; }
-    string Username { get; set; }
+
+    List<string> Users { get; set; }
 
     protected async override Task OnInitAsync()
     {
+        await base.OnInitAsync();
+
         // Try to establish a pre-existing connection
         var connection = await GameHubClient.GetHubConnection();
 
-        Session = await connection.InvokeAsync<GameSession>("FindSession", GameID);
-        if (Session == null)
+        var foundSession = await connection.InvokeAsync<GameSession>("FindSession", GameID);
+        if (foundSession == null)
         {
-            UriHelper.NavigateTo("/");
+            UriHelper.NavigateTo("/Home");
         }
-        
+
+        // Join Session
+        Session = await connection.InvokeAsync<GameSession>("JoinGame", CurrentUser.Username, GameID);
+        Users = Session.CurrentUsers.Select(c => c.Username).ToList();
+
+        connection.On<List<string>>("GameSessionUpdated", (users) =>
+        {
+            Console.WriteLine("Trying to update session to:");
+            Console.WriteLine(JsonConvert.SerializeObject(users));
+
+            Users = users;
+            StateHasChanged();
+
+            return Task.CompletedTask;
+        });
+
     }
-
-    async Task JoinGame()
-    {
-        var connection = await GameHubClient.GetHubConnection();
-
-        var session = await connection.InvokeAsync<GameSession>("JoinGame", Username, Session.SessionID.ToString());
-
-        User = session.CurrentUsers.FirstOrDefault(s => s.Username == Username);
-    }
-
 }

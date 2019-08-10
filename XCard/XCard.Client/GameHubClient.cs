@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using XCard.Shared;
 
 namespace XCard.Client
 {
@@ -27,6 +28,7 @@ namespace XCard.Client
                 .WithUrl("/gameHub", // The hub URL. If the Hub is hosted on the server where the blazor is hosted, you can just use the relative path.
                     opt =>
                     {
+                        opt.LogMessageContent = true;
                         opt.LogLevel = SignalRLogLevel.Trace; // Client log level
                         opt.Transport = HttpTransportType.WebSockets; // Which transport you want to use for this connection
                     })

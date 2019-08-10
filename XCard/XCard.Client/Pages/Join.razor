@@ -1,0 +1,56 @@
+﻿@page "/join/{GameID}"
+
+@inject HttpClient Http
+@inject IGameHubClient GameHubClient
+@inject IUriHelper UriHelper
+@using XCard.Shared
+
+
+@if (Session != null)
+{
+    <h1>Game</h1>
+    <p>@Session.SessionName</p>
+
+
+    <label>Please provide a name:</label>
+    <input type="text" bind="@Username" />
+    <button onclick="@JoinGame">Join Game</button>
+
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@functions {
+
+    [Parameter]
+    string GameID { get; set; }
+
+    GameSession Session { get; set; }
+    GameUser User { get; set; }
+    bool IsAdmin { get; set; }
+    string Username { get; set; }
+
+    protected async override Task OnInitAsync()
+    {
+        // Try to establish a pre-existing connection
+        var connection = await GameHubClient.GetHubConnection();
+
+        Session = await connection.InvokeAsync<GameSession>("FindSession", GameID);
+        if (Session == null)
+        {
+            UriHelper.NavigateTo("/");
+        }
+    }
+
+    async Task JoinGame()
+    {
+        var connection = await GameHubClient.GetHubConnection();
+
+        var session = await connection.InvokeAsync<GameSession>("JoinGame", Username, Session.SessionID.ToString());
+
+        User = session.CurrentUsers.FirstOrDefault(s => s.Username == Username);
+    }
+
+}
