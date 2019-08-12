@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using XCard.Server.Hubs;
 using XCard.Shared;
 
 namespace XCard.Server.Stores
@@ -24,6 +25,11 @@ namespace XCard.Server.Stores
     public class GameSessionStore : IGameSessionStore
     {
         private Dictionary<Guid, GameSession> _gameSessionStore { get; set; } = new Dictionary<Guid, GameSession>();
+
+        public GameSessionStore()
+        {
+
+        }
 
         public void EndSession(Guid id)
         {

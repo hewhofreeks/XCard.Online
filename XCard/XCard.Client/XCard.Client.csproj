@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazor-State" Version="1.0.0-preview7.19365.7-20190731-164341" />
     <PackageReference Include="Blazor.Extensions.SignalR" Version="0.2.0" />
     <PackageReference Include="Blazor.Extensions.Storage" Version="0.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor" Version="3.0.0-preview7.19365.7" />

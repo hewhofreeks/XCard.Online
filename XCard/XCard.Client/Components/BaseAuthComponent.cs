@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlazorState;
 using Microsoft.AspNetCore.Blazor;
 using Microsoft.AspNetCore.Components;
 using XCard.Client.Models;
@@ -10,7 +11,7 @@ using XCard.Shared;
 
 namespace XCard.Client.Components
 {
-    public class BaseAuthComponent : ComponentBase
+    public class BaseAuthComponent : BlazorStateComponent
     {
         protected LocalUserData CurrentUser { get; set; }
 

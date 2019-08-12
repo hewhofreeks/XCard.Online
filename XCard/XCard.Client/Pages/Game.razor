@@ -1,22 +1,24 @@
 ﻿@page "/game/{GameID}"
 @using XCard.Shared
-@using Newtonsoft.Json
-@inherits Components.BaseAuthComponent
+@inherits Features.Game.GameModel
 @inject IGameHubClient GameHubClient
 @inject IUriHelper UriHelper
 
-@if (Session != null)
+@if (State.IsGameLoaded)
 {
     <h1>Game</h1>
-    <p>@Session.SessionName</p>
+    <p>@State.Session.SessionName</p>
 
-    <p>Welcome @CurrentUser.Username</p>
-    <button onclick="">PUSH ME(Does nothing right now)</button>
+    <p>Welcome @State.CurrentUser.Username</p>
+    <button @onclick="ButtonClick">PUSH ME(Does nothing right now)</button>
     <p>Open link in new window to demonstrate how another person can join: @UriHelper.GetAbsoluteUri()</p> 
-
+    @if(State.ButtonPushed)
+    {
+        <p>SOMEONE PUSHED THE BUTTON</p>
+    }
     <p>Current People In Game</p>
     <div>
-        @foreach (var user in Users)
+        @foreach (var user in this.State.Users)
         {
             <div>
                 @user
@@ -27,44 +29,4 @@
 else
 {
     <p>Loading...</p>
-}
-
-@functions {
-
-    [Parameter]
-    string GameID { get; set; }
-
-    GameSession Session { get; set; }
-
-    List<string> Users { get; set; }
-
-    protected async override Task OnInitAsync()
-    {
-        await base.OnInitAsync();
-
-        // Try to establish a pre-existing connection
-        var connection = await GameHubClient.GetHubConnection();
-
-        var foundSession = await connection.InvokeAsync<GameSession>("FindSession", GameID);
-        if (foundSession == null)
-        {
-            UriHelper.NavigateTo("/Home");
-        }
-
-        // Join Session
-        Session = await connection.InvokeAsync<GameSession>("JoinGame", CurrentUser.Username, GameID);
-        Users = Session.CurrentUsers.Select(c => c.Username).ToList();
-
-        connection.On<List<string>>("GameSessionUpdated", (users) =>
-        {
-            Console.WriteLine("Trying to update session to:");
-            Console.WriteLine(JsonConvert.SerializeObject(users));
-
-            Users = users;
-            StateHasChanged();
-
-            return Task.CompletedTask;
-        });
-
-    }
 }

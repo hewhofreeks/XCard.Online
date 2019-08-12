@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using XCard.Server.Stores;
 using XCard.Shared;
+using XCard.Shared.ClientHandlers;
 
 namespace XCard.Server.Hubs
 {
@@ -39,7 +40,9 @@ namespace XCard.Server.Hubs
 
                 await this.Groups.AddToGroupAsync(this.Context.ConnectionId, sessionForUser.SessionID.ToString());
 
-                await this.Clients.Group(sessionId).SendAsync("GameSessionUpdated", sessionForUser.CurrentUsers.Select(s => s.Username).ToList());
+                //await this.Clients.Group(sessionId).SendAsync("GameSessionUpdated", sessionForUser.CurrentUsers.Select(s => s.Username).ToList());
+                await this.Clients.Group(sessionId).SendAsync(GameHandlers.PLAYER_JOINED, user.Username);
+
             }
 
             return sessionForUser;

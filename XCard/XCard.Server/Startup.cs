@@ -22,7 +22,6 @@ namespace XCard.Server
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
                     new[] { "application/octet-stream" });
             });
-
             services.AddSingleton<IGameSessionStore, GameSessionStore>();
 
             services.AddSignalR();

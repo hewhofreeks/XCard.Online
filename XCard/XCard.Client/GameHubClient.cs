@@ -1,10 +1,17 @@
 ﻿using Blazor.Extensions;
+using MediatR;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using TypeSupport.Extensions;
+using XCard.Client.Features;
+using XCard.Client.Features.Game;
+using XCard.Client.Features.Game.PlayerJoined;
 using XCard.Shared;
+using XCard.Shared.ClientHandlers;
 
 namespace XCard.Client
 {
@@ -21,6 +28,8 @@ namespace XCard.Client
         private readonly HubConnection _hubConnection;
         private Task _isHubConnected;
 
+        public object Gamehandlers { get; private set; }
+
         public GameHubClient(IJSRuntime jSRuntime)
         {
             _jsRuntime = jSRuntime;
@@ -35,8 +44,10 @@ namespace XCard.Client
                     .Build(); // Build the HubConnection
         }
 
+
         public void StartConnection()
         {
+
             _isHubConnected = _hubConnection.StartAsync();
         }
 
