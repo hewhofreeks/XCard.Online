@@ -5,4 +5,8 @@
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Blazor-State" Version="1.0.0-preview8.19405.7-20190817-213328" />
+  </ItemGroup>
+
 </Project>

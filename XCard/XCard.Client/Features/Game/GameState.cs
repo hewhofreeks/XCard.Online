@@ -16,15 +16,15 @@ namespace XCard.Client.Features.Game
 
         public LocalUserData CurrentUser { get; set; }
         public GameSession Session { get; set; }
-        public List<string> Users { get; set; }
         public bool IsGameLoaded { get; set; }
+        public bool HasJoinedGame { get; set; }
         public bool ButtonPushed { get; set; }
 
         protected override void Initialize()
         {
             IsGameLoaded = false;
-            Users = new List<string>();
             Session = null;
+            HasJoinedGame = false;
         }
     }
 }

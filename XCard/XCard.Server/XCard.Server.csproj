@@ -10,10 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazor.Extensions.SignalR" Version="0.2.0" />
-    <PackageReference Include="Blazor.Extensions.Storage" Version="0.2.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Blazor.Server" Version="3.0.0-preview7.19365.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0-preview7.19365.7" />
+    <PackageReference Include="Blazor-State" Version="1.0.0-preview8.19405.7-20190817-213328" />
+    <PackageReference Include="Blazor.Extensions.SignalR" Version="0.3.0" />
+    <PackageReference Include="Blazor.Extensions.Storage" Version="0.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.Server" Version="3.0.0-preview8.19405.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0-preview8.19405.7" />
   </ItemGroup>
 
   <ItemGroup>

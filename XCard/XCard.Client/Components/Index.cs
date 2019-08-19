@@ -35,7 +35,7 @@ namespace XCard.Client.Components
                 _uriHelper.NavigateTo("/Home");
         }
 
-        protected override async Task OnInitAsync()
+        protected override async Task OnInitializedAsync()
         {
 
             var user = await _localGameStorage.FindUser();
@@ -44,7 +44,7 @@ namespace XCard.Client.Components
                 _uriHelper.NavigateTo("/Home");
 
 
-            await base.OnInitAsync();
+            await base.OnInitializedAsync();
         }
     }
 }

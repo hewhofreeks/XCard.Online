@@ -6,6 +6,12 @@
 
 @if (State.IsGameLoaded)
 {
+    if (!State.HasJoinedGame)
+    {
+        <div class="overlay">
+            <button @onclick="JoinGame">JOIN GAME</button>
+        </div>
+    }
     <h1>Game</h1>
     <p>@State.Session.SessionName</p>
 
@@ -18,10 +24,10 @@
     }
     <p>Current People In Game</p>
     <div>
-        @foreach (var user in this.State.Users)
+        @foreach (var user in this.State.Session.CurrentUsers)
         {
             <div>
-                @user
+                @user.Username
             </div>
         }
     </div>

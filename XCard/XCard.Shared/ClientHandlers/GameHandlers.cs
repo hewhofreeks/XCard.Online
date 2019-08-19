@@ -7,5 +7,7 @@ namespace XCard.Shared.ClientHandlers
     public class GameHandlers
     {
         public const string PLAYER_JOINED = "userAddedToGame";
+        public const string SESSION_UPDATED = "gameSessionUpdated";
+
     }
 }

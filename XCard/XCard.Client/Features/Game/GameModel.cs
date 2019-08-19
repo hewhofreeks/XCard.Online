@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using XCard.Client.Components;
 using XCard.Client.Features.Game.ButtonPushed;
+using XCard.Client.Features.Game.GameSessionUpdated;
 using XCard.Client.Features.Game.LoadGame;
 using XCard.Client.Features.Game.PlayerJoined;
 using XCard.Client.Models;
@@ -25,10 +26,7 @@ namespace XCard.Client.Features.Game
         [Inject] public IMediator Mediator { get; set; }
         [Inject] public IStore Store { get; set; }
 
-        internal void ButtonClick() =>
-            Mediator.Send(new ButtonPushedAction());
 
-        protected LocalUserData CurrentUser { get; set; }
 
         [Inject]
         protected ILocalGameStorage _LocalGameStorage { get; set; }
@@ -41,56 +39,30 @@ namespace XCard.Client.Features.Game
         [Parameter]
         string GameID { get; set; }
 
-        protected override async Task OnInitAsync()
+
+        protected override async Task OnInitializedAsync()
         {
             // Try to establish a pre-existing connection
             var connection = await GameHubClient.GetHubConnection();
 
-            connection.On<string>(GameHandlers.PLAYER_JOINED,
+            connection.On<string>(GameHandlers.SESSION_UPDATED,
                 (s) =>
                 {
-                    return Mediator.Send(new PlayerJoinedAction { Username = s });
+                    return Mediator.Send(new GameSessionUpdatedAction { GameID = new Guid(GameID) });
                 });
 
             await Mediator.Send(new LoadGameAction { GameID = new Guid(GameID) });
 
-            //if (CurrentUser == null)
-            //{
-            //    CurrentUser = await _LocalGameStorage.FindUser();
-
-            //    if (CurrentUser == null)
-            //    {
-            //        var redirectTo = UriHelper.GetAbsoluteUri().Replace(UriHelper.GetBaseUri(), "");
-
-            //        UriHelper.NavigateTo($"?redirectTo={redirectTo}");
-
-            //    }
-            //}
-
-
-
-            //var foundSession = await connection.InvokeAsync<GameSession>("FindSession", GameID);
-            //if (foundSession == null)
-            //{
-            //    UriHelper.NavigateTo("/Home");
-            //}
-
-            //// Join Session
-            //await connection.InvokeAsync<GameSession>("JoinGame", CurrentUser.Username, GameID);
-
-
-
-            //await base.OnInitAsync();
-            await base.OnInitAsync();
+            await base.OnInitializedAsync();
         }
 
-        //public async Task LogOut()
-        //{
-        //    await _LocalGameStorage.LogOut();
+        protected async Task JoinGame()
+        {
+            await Mediator.Send(new PlayerJoinedAction { GameID = new Guid(this.GameID), Username = this.State.CurrentUser.Username });
+        }
 
-        //    _UriHelper.NavigateTo("/");
-        //}
-
+        internal void ButtonClick() =>
+            Mediator.Send(new ButtonPushedAction());
 
     }
 }

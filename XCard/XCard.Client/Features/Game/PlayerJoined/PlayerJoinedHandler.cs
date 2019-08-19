@@ -1,4 +1,5 @@
 ﻿using BlazorState;
+using MediatR;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -6,29 +7,37 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using XCard.Client.Features.Game;
+using XCard.Client.Features.Game.GameSessionUpdated;
 using XCard.Client.Features.Game.PlayerJoined;
+using XCard.Shared;
 
 namespace XCard.Client.Features.Game
 {
     public partial class GameState
     {
-        public class PlayerJoinedHandler : RequestHandler<PlayerJoinedAction, GameState>
+        public class PlayerJoinedHandler : BlazorState.RequestHandler<PlayerJoinedAction, GameState>
         {
-            public PlayerJoinedHandler(IStore aStore) : base(aStore)
+            private readonly IGameHubClient _gameHubClient;
+            private readonly IMediator _mediator;
+
+            public PlayerJoinedHandler(IStore aStore, IGameHubClient gameHubClient, IMediator mediator) : base(aStore)
             {
+                _gameHubClient = gameHubClient;
+                _mediator = mediator;
             }
 
-            public override Task<GameState> Handle(PlayerJoinedAction request, CancellationToken aCancellationToken)
+            public override async Task<GameState> Handle(PlayerJoinedAction request, CancellationToken aCancellationToken)
             {
                 var state = this.Store.GetState<GameState>();
 
-                state.Users.Add(request.Username);
-                state.ButtonPushed = false;
+                var connection = await _gameHubClient.GetHubConnection();
+                await connection.InvokeAsync<GameSession>("JoinGame", request.Username, request.GameID.ToString());
 
-                Console.WriteLine("Updating State:");
-                Console.WriteLine(JsonConvert.SerializeObject(state));
+                await this._mediator.Send(new GameSessionUpdatedAction { GameID = request.GameID });
 
-                return Task.FromResult(state);
+                state.HasJoinedGame = true;
+
+                return state;
             }
 
         }

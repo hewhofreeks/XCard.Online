@@ -14,7 +14,7 @@
 
     <label>Please provide a name:</label>
     <input type="text" bind="@Username" />
-    <button onclick="@JoinGame">Join Game</button>
+    <button @onclick="JoinGame">Join Game</button>
 
 }
 else
@@ -32,7 +32,7 @@ else
     bool IsAdmin { get; set; }
     string Username { get; set; }
 
-    protected async override Task OnInitAsync()
+    protected async override Task OnInitializedAsync()
     {
         // Try to establish a pre-existing connection
         var connection = await GameHubClient.GetHubConnection();

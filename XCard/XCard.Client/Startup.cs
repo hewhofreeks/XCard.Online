@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using System.Text.Json;
 using XCard.Client.Features.Game;
 using XCard.Client.Services;
 
@@ -23,6 +24,13 @@ namespace XCard.Client
               {
                 typeof(Client.Startup).GetTypeInfo().Assembly
               });
+            services.AddSingleton
+              (
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                }
+              );
         }
 
         public void Configure(IComponentsApplicationBuilder app)

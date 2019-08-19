@@ -41,10 +41,11 @@ namespace XCard.Client.Features.Game.LoadGame
 
             state.Session = foundSession;
             state.IsGameLoaded = true;
-            state.Users.AddRange(foundSession.CurrentUsers.Select(s => s.Username));
+            //state.Users.AddRange(foundSession.CurrentUsers.Select(s => s.Username));
             state.CurrentUser = currentUser;
             Console.WriteLine("Updating State:");
             Console.WriteLine(JsonConvert.SerializeObject(state));
+
             return state;
         }
     }

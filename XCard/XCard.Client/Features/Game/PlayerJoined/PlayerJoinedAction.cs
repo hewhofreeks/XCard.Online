@@ -17,6 +17,8 @@ namespace XCard.Client.Features.Game.PlayerJoined
 
         public string Username { get; set; }
 
+        public Guid GameID { get; set; }
+
         public Guid Id { get; }
     }
 

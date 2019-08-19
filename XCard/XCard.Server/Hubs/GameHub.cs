@@ -40,9 +40,7 @@ namespace XCard.Server.Hubs
 
                 await this.Groups.AddToGroupAsync(this.Context.ConnectionId, sessionForUser.SessionID.ToString());
 
-                //await this.Clients.Group(sessionId).SendAsync("GameSessionUpdated", sessionForUser.CurrentUsers.Select(s => s.Username).ToList());
-                await this.Clients.Group(sessionId).SendAsync(GameHandlers.PLAYER_JOINED, user.Username);
-
+                await this.Clients.Group(sessionId).SendAsync(GameHandlers.SESSION_UPDATED);
             }
 
             return sessionForUser;

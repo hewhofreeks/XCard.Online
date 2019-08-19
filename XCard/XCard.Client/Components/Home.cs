@@ -16,9 +16,9 @@ namespace XCard.Client.Components
         {
         }
 
-        protected override async Task OnInitAsync()
+        protected override async Task OnInitializedAsync()
         {
-            await base.OnInitAsync();
+            await base.OnInitializedAsync();
 
             Games = await _LocalGameStorage.GetPastGameConnections();
         }

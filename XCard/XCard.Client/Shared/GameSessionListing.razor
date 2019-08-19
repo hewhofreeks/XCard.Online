@@ -14,13 +14,13 @@
 
     bool IsGameActive { get; set; }
 
-    protected override async Task OnInitAsync()
+    protected override async Task OnInitializedAsync()
     {
         var connection = await GameHubClient.GetHubConnection();
 
         IsGameActive = await connection.InvokeAsync<bool>("IsGameConnectionActive", GameData.SessionID);
 
-        await base.OnInitAsync();
+        await base.OnInitializedAsync();
     }
 
     async Task TryJoin()

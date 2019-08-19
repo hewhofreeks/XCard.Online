@@ -26,7 +26,7 @@ namespace XCard.Client.Components
 
         }
 
-        protected override async Task OnInitAsync()
+        protected override async Task OnInitializedAsync()
         {
             if (CurrentUser == null)
             {
@@ -41,7 +41,7 @@ namespace XCard.Client.Components
                 }
             }
 
-            await base.OnInitAsync();
+            await base.OnInitializedAsync();
         }
 
         public async Task LogOut()
